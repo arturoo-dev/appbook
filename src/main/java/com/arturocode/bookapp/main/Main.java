@@ -12,10 +12,9 @@ import java.util.stream.Collectors;
 public class Main {
 
     private static final String URL_BASE = "https://gutendex.com/books/";
-    private final RequestAPI requestAPI = new RequestAPI();
-    private final ConvertData convertData = new ConvertData();
-    private final String jsonRequest = requestAPI.requestData(URL_BASE);
-    private final Books dataBooks = convertData.convertData(jsonRequest, Books.class);
+    private static final RequestAPI requestAPI = new RequestAPI();
+    private static final ConvertData convertData = new ConvertData();
+
     private final Scanner input = new Scanner(System.in);
     int option = 0;
 
@@ -56,6 +55,8 @@ public class Main {
     }
 
     public void topTen() {
+        String jsonRequest = requestAPI.requestData(URL_BASE);
+        Books dataBooks = convertData.convertData(jsonRequest, Books.class);
         System.out.println("Los 10 libros mas descargados son:");
         dataBooks.books().stream()
                 .sorted(Comparator.comparing(BooksData::download_count).reversed())
@@ -91,12 +92,13 @@ public class Main {
                 System.out.println("Autores: " + booksData.authors());
                 System.out.println("Idiomas: " + booksData.languages());
                 System.out.println("Cantidad de descargas:" + booksData.download_count());
-
             }
         }
     }
 
     public void statistics() {
+        String jsonRequest = requestAPI.requestData(URL_BASE);
+        Books dataBooks = convertData.convertData(jsonRequest, Books.class);
         DoubleSummaryStatistics statistics = dataBooks.books().stream()
                 .filter(e -> e.download_count() > 0)
                 .collect(Collectors.summarizingDouble(BooksData::download_count));
